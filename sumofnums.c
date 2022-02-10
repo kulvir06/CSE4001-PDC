@@ -1,67 +1,31 @@
+//KULVIR SINGH
+//19BCE2074
 #include<stdio.h>
 #include<omp.h>
 
-/* Main Program */
-
-main()
-{
-	float          *Array, *Check, serial_sum, sum, partialsum;
-	int             array_size, i;
-
-	printf("Enter the size of the array\n");
-	scanf("%d", &array_size);
-
-	if (array_size <= 0) {
-		printf("Array Size Should Be Of Positive Value ");
-		exit(1);
+void main() {
+        printf("19BCE2074 \nKULVIR SINGH\n");
+	int i, tid, numt, sum=0;
+	double t1, t2;
+	int ARR_SIZE=10000;
+	int a[ARR_SIZE];
+	
+	t1 = omp_get_wtime();
+	#pragma omp parallel default( shared ) private( i, tid ) 
+	{
+		int from, to;
+		tid = omp_get_thread_num();
+		numt = omp_get_num_threads();
+		from = ( ARR_SIZE/numt )*tid;
+		to = ( ARR_SIZE/numt )*( tid+1 )-1;
+		if( tid == numt-1 ) to = ARR_SIZE-1;
+		for(i=from; i<=to; i++)
+		#pragma omp critical
+		sum+= a[i];
+		t2=omp_get_wtime();
 	}
-	/* Dynamic Memory Allocation */
-
-	Array = (float *) malloc(sizeof(float) * array_size);
-	Check = (float *) malloc(sizeof(float) * array_size);
-
-	/* Array Elements Initialization */
-
-	for (i = 0; i < array_size; i++) {
-		Array[i] = i * 5;
-		Check[i] = Array[i];
-	}
-
-	printf("The Array Elements Are \n");
-
-	for (i = 0; i < array_size; i++)
-		printf("Array[%d]=%f\n", i, Array[i]);
-
-	sum = 0.0;
-	partialsum = 0.0;
-
-	/* OpenMP Parallel For Directive And Critical Section */
-
-#pragma omp parallel for shared(sum)
-	for (i = 0; i < array_size; i++) {
-#pragma omp critical
-		sum = sum + Array[i];
-
-	}
-
-	serial_sum = 0.0;
-
-	/* Serail Calculation */
-	for (i = 0; i < array_size; i++)
-		serial_sum = serial_sum + Check[i];
-
-
-	if (serial_sum == sum)
-		printf("\nThe Serial And Parallel Sums Are Equal\n");
-	else {
-		printf("\nThe Serial And Parallel Sums Are UnEqual\n");
-		exit(1);
-	}
-
-	/* Freeing Memory */
-	free(Check);
-	free(Array);
-
-	printf("\nThe SumOfElements Of The Array Using OpenMP Directives Is %f\n", sum);
-	printf("\nThe SumOfElements Of The Array By Serial Calculation Is %f\n", serial_sum);
+	printf("Sum  = %d \n",sum);
+	printf("Time = %g \n",t2-t1);
+	
+	
 }
