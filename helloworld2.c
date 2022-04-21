@@ -12,8 +12,8 @@ int main(int *argc, char *argv[])
         int j;
         int tid = omp_get_thread_num();
         if (tid == 0)
-            for (j = 0; j < 100000; j++)
-                numt = omp_get_num_threads();
+            for (j = 0; j < 100000; j++);
+        numt = omp_get_num_threads();
         printf("Hello World from thread %d of %d \n", tid, numt);
     }
 
